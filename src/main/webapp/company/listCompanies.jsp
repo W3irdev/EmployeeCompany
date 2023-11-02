@@ -1,3 +1,4 @@
+<%@page import="com.jacaranda.exceptions.CompanyDatabaseException"%>
 <%@page import="com.jacaranda.models.Company"%>
 <%@page import="java.util.ArrayList"%>
 
@@ -27,19 +28,23 @@
 
 
 </head>
-
+<%
+// Comprobamos la session, si somos usuario o admin muestra la pagina, en caso de que no seamos ninguno nos pedira que logeemos
+if(session.getAttribute("userSession") != null && (session.getAttribute("userSession").equals("user") || session.getAttribute("userSession").equals("admin"))){ %>
 <body>
-
+<%@ include file="../navbar.jsp" %>
 	<%
-
+	// Declaramos Variables
 	ArrayList<Company> result = null;
 
 			try{
-
+				// Inicializamos Variables
 				result = (ArrayList<Company>) dbRepository.findAll(Company.class);
 
-			}catch(Exception e){
-
+			}catch(CompanyDatabaseException cde){
+				
+				response.sendRedirect("/error500.jsp?msg="+cde.getMessage());
+				return;
 		
 
 			}
@@ -106,5 +111,6 @@
 	</table>
 
 </body>
-
+<%}else{ %>
+<%response.sendRedirect("../error500.jsp?msg=Debe estar logeado"); } %>
 </html>

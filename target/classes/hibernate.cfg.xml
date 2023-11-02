@@ -21,6 +21,7 @@
     <mapping class="com.jacaranda.models.Employee" />
     <mapping class="com.jacaranda.models.Project" />
     <mapping class="com.jacaranda.models.CompanyProject" />
+    <mapping class="com.jacaranda.models.User" />
 
   </session-factory>
 </hibernate-configuration>

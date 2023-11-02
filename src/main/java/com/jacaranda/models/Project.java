@@ -18,7 +18,7 @@ public class Project {
 	private String butget;
 	
 	@OneToMany(mappedBy = "project")
-	List<CompanyProject> companyProject;
+	private List<CompanyProject> companyProject;
 	
 	
 	public List<CompanyProject> getCompanyProject() {

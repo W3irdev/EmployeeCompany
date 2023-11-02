@@ -1,8 +1,8 @@
 package com.jacaranda.models;
 
+import java.sql.Date;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.Objects;
 
 import jakarta.persistence.Entity;
@@ -34,8 +34,19 @@ public class Employee {
 		// TODO Auto-generated constructor stub
 	}
 
-	public Employee(String firstName, String lastName, String email, String gender, String dateOfBirth, Company company) {
+	public Employee(String firstName, String lastName, String email, String gender, String dateOfBirth, Company company) throws Exception {
 		super();
+		this.firstName = firstName;
+		this.lastName = lastName;
+		this.email = email;
+		this.gender = gender;
+		setDateOfBirth(dateOfBirth);
+		this.company = company;
+	}
+	
+	public Employee(int id, String firstName, String lastName, String email, String gender, String dateOfBirth, Company company) throws Exception {
+		super();
+		this.id = id;
 		this.firstName = firstName;
 		this.lastName = lastName;
 		this.email = email;
@@ -88,11 +99,13 @@ public class Employee {
 		return dateOfBirth;
 	}
 
-	public void setDateOfBirth(String dateOfBirth) {
+	public void setDateOfBirth(String dateOfBirth) throws Exception {
 		try {	
-			this.dateOfBirth = new SimpleDateFormat("yyyy-MM-DD").parse(dateOfBirth);
-		} catch (ParseException e) {
+			//this.dateOfBirth = new SimpleDateFormat("yyyy-MM-DD").parse(dateOfBirth);
+			this.dateOfBirth = Date.valueOf(dateOfBirth);
+		} catch (Exception e) {
 			e.printStackTrace();
+			throw new Exception("Introduzca un formato adecuado de fecha");
 		}
 		
 		

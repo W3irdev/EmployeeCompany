@@ -3,6 +3,8 @@ package com.jacaranda.models;
 import java.sql.Date;
 import java.util.Objects;
 
+import com.jacaranda.exceptions.CompanyProjectException;
+
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
@@ -26,6 +28,26 @@ public class CompanyProject {
 	@Id
 	private Date begin;
 	private Date end;
+	
+	
+	
+	public CompanyProject() {
+		super();
+		// TODO Auto-generated constructor stub
+	}
+	
+	
+	
+	public CompanyProject(Company company, Project project, Date begin, Date end) throws CompanyProjectException {
+		super();
+		this.company = company;
+		this.project = project;
+		setBegin(begin);
+		setEnd(end);
+	}
+
+
+
 	public Company getCompany() {
 		return company;
 	}
@@ -41,13 +63,14 @@ public class CompanyProject {
 	public Date getBegin() {
 		return begin;
 	}
-	public void setBegin(Date begin) {
+	public void setBegin(Date begin) throws CompanyProjectException {
 		this.begin = begin;
 	}
 	public Date getEnd() {
 		return end;
 	}
-	public void setEnd(Date end) {
+	public void setEnd(Date end) throws CompanyProjectException {
+		if(end.before(this.begin)) throw new CompanyProjectException("La fecha de finalizacion no puede ser anterior a la de inicio");
 		this.end = end;
 	}
 	@Override

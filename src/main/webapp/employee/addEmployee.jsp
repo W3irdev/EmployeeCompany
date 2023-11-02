@@ -1,3 +1,4 @@
+<%@page import="com.jacaranda.exceptions.CompanyDatabaseException"%>
 <%@page import="com.jacaranda.exceptions.EmployeeCompanyException"%>
 <%@page import="com.jacaranda.models.Employee"%>
 <%@page import="com.jacaranda.repository.dbRepository"%>
@@ -13,15 +14,28 @@
 <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css"> 
 <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
 </head>
-<body>
-
 <%
+//Comprobamos la session, si somos usuario o admin muestra la pagina, en caso de que no seamos ninguno nos pedira que logeemos
+if(session.getAttribute("userSession")!=null && session.getAttribute("userSession").equals("admin")){ %>
+
+<body>
+<%
+	// Variables
 	String message = "";
 	ArrayList<Company> companies = null;
+	// Inicializamos variables
 	if(companies==null){
+		try{
+			
 		companies = (ArrayList<Company>) dbRepository.findAll(Company.class);
+		}catch(CompanyDatabaseException cde){
+			response.sendRedirect("/error500.jsp?msg="+cde.getMessage());
+			return;
+			
+		}
 	}
 
+	// Comprobamos que se ha pulsado el boton de anadir y que ningun campo quede vacio.
 	if(request.getParameter("submit")!= null && request.getParameter("submit").equals("submit") && request.getParameter("name")!=null && request.getParameter("surname")!=null && request.getParameter("email")!=null 
 			&& request.getParameter("gender")!=null && request.getParameter("birthdate")!=null && request.getParameter("company")!=null){
 			String name = request.getParameter("name");
@@ -30,19 +44,21 @@
 			String gender = request.getParameter("gender");
 			String birthdate = request.getParameter("birthdate");
 			String company = request.getParameter("company");
-			Company c = dbRepository.getInstance(Company.class, company);
+			// Recuperamos la compania de la lista.
+			Company c = dbRepository.find(Company.class, Integer.valueOf(company));
 			try{
+				// Creamos la instancia de empleado que sera guardada
 				Employee newEmp = new Employee(name,surname,email,gender,birthdate,c);
 				dbRepository.save(newEmp);
 				message = "Usuario añadido con exito";
 			}catch (EmployeeCompanyException ece){
-				out.println(ece.getMessage());
+				message=ece.getMessage();
 			}catch (Exception e){
-				out.println(e.getMessage());
+				message=e.getMessage();
 			}
 	} 
 %>
-
+<%@ include file="../navbar.jsp" %>
 <form>
   <div class="form-group row">
     <label for="name" class="col-4 col-form-label">Nombre</label> 
@@ -79,7 +95,7 @@
     <div class="col-8">
       <select id="company" name="company" class="custom-select" required="required">
       	<%for(Company c : companies){ %>
-			<option value="<%= c.getName()%>"><%= c.getName()%></option>
+			<option value="<%= c.getId()%>"><%= c.getName()%></option>
       	<%} %>
         
       </select>
@@ -91,7 +107,8 @@
     </div>
   </div>
 </form>
-
+<%=message %>
 
 </body>
+<%}else response.sendRedirect("../error500.jsp?msg=Debe ser administrador");  %>
 </html>

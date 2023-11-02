@@ -28,19 +28,24 @@
 
 
 </head>
-
+<%
+// Comprobamos la session, si somos usuario o admin muestra la pagina, en caso de que no seamos ninguno nos pedira que logeemos
+if(session.getAttribute("userSession") != null && (session.getAttribute("userSession").equals("user") || session.getAttribute("userSession").equals("admin"))){ %>
+<%@ include file="/navbar.jsp" %>
 <body>
 
+
+
 	<%
-
+	// Variables
 	ArrayList<Company> result = null;
-
+	String message = "";
 			try{
-
+				// Inicializamos la lista de companias
 				result = (ArrayList<Company>) dbRepository.findAll(Company.class);
-
 			}catch(Exception e){
-
+				response.sendRedirect("/error500.jsp?msg="+e.getMessage());
+				return;
 		
 
 			}
@@ -48,9 +53,8 @@
 	%>
 
 
-
 	<table class="table">
-
+	
 	<%for(Company c : result){ %>
 	<tr>
 	<th>Nombre</th>
@@ -90,5 +94,7 @@
 	</table>
 
 </body>
+<%}else{ %>
+<%response.sendRedirect("../error500.jsp?msg=Debe estar logeado"); } %>
 
 </html>

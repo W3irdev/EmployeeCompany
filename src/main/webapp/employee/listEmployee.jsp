@@ -25,20 +25,23 @@
 <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
 
 </head>
-
 <body>
-
+<%
+// Comprobamos la session, si somos usuario o admin muestra la pagina, en caso de que no seamos ninguno nos pedira que logeemos
+if(session.getAttribute("userSession") != null && (session.getAttribute("userSession").equals("user") || session.getAttribute("userSession").equals("admin"))){ %>
+<%@ include file="../navbar.jsp" %>
 	<%
 
 	ArrayList<Employee> result = null;
 
 			try{
-
+				
 				result = (ArrayList<Employee>) dbRepository.findAll(Employee.class);
 
 			}catch(Exception e){
 
-		
+				response.sendRedirect("/error500.jsp?msg="+e.getMessage());
+				return;
 
 			}
 
@@ -73,7 +76,7 @@
 		</thread>
 
 		<%
-
+		// Mostramos por pantalla la lista de empleados
 		for (Employee e: result){
 
 		%>
@@ -93,16 +96,22 @@
 					<td><%=e.getDateOfBirth()%></td>
 
 					<td><%=e.getCompany().getName()%></td>
-
-					<form><td>
-					<input type="text" name="idEmp" value="<%=e.getId()%>" hidden/>
-					<input type="submit" name="emp" value="infoemp"/></td></form>
+					<%if(session.getAttribute("userSession").equals("admin")){ %>
+					<form action="editEmployee.jsp"><td>
+					<input type="text" name="id" value="<%=e.getId()%>" hidden/>
+					<input type="submit" name="emp" value="Editar"/></td></form>
+					<form action="delEmployee.jsp"><td>
+					<input type="text" name="id" value="<%=e.getId()%>" hidden/>
+					<input type="submit" name="empDel" value="Borrar"/></td></form>
+					<%}
+					%>
 				</tr>
 
 		<% }%>
 
 	</table>
-
+<%}else{ %>
+<%response.sendRedirect("../error500.jsp?msg=Debe estar logeado"); } %>
 </body>
 
 </html>

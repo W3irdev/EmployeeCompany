@@ -6,6 +6,7 @@ import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.hibernate.query.SelectionQuery;
 
+import com.jacaranda.exceptions.CompanyDatabaseException;
 import com.jacaranda.exceptions.EmployeeCompanyException;
 import com.jacaranda.models.Company;
 import com.jacaranda.models.Employee;
@@ -35,6 +36,28 @@ public class dbRepository {
 		
 	}
 	
+	public static <T> T find(Class<T> c, String name) throws Exception {
+		
+		Session session=null;
+		T result = null;
+		
+		try {
+			session = BdUtil.getSessionFactory().openSession();
+		} catch (Exception e) {
+			throw new Exception("Error en la base de datos");
+		}
+		try {
+			result = (T) session.find(c, name);
+		} catch (Exception e) {
+			throw new Exception("Error al obtener la entidad");
+
+		}
+		
+		return result;
+		
+	}
+	
+	
 	
 	@SuppressWarnings("unchecked")
 	public static <T> T getInstance(Class<T> c, String name) throws Exception {
@@ -62,7 +85,7 @@ public class dbRepository {
 	}
 	
 	@SuppressWarnings("unchecked")
-	public static <T> List<T> findAll(Class<T> c) throws Exception {
+	public static <T> List<T> findAll(Class<T> c) throws CompanyDatabaseException {
 		
 		Session session=null;
 		List<T> result = null;
@@ -70,12 +93,12 @@ public class dbRepository {
 		try {
 			session = BdUtil.getSessionFactory().openSession();
 		} catch (Exception e) {
-			throw new Exception("Error en la base de datos");
+			throw new CompanyDatabaseException("Error en la base de datos");
 		}
 		try {
 			result = (List<T>) session.createSelectionQuery("From " + c.getName()).getResultList();
 		} catch (Exception e) {
-			throw new Exception("Error al obtener la Lista");
+			throw new CompanyDatabaseException("Error al obtener la Lista");
 
 		}
 		
@@ -89,6 +112,36 @@ public class dbRepository {
 		
 		try {
 			session.persist(c);
+			transaction.commit();
+		} catch (Exception e) {
+			transaction.rollback();
+			throw new EmployeeCompanyException("No se ha podido añadir a la tabla " + c.getClass());
+		}
+		
+	}
+	
+	public static <T> void delete(T c) throws EmployeeCompanyException {
+		
+		Session session = (Session) BdUtil.getSessionFactory().openSession();
+		Transaction transaction = (Transaction) session.beginTransaction();
+		
+		try {
+			session.remove(c);
+			transaction.commit();
+		} catch (Exception e) {
+			transaction.rollback();
+			throw new EmployeeCompanyException("No se ha podido eliminar de la tabla " + c.getClass());
+		}
+		
+	}
+	
+	public static <T> void modify(T c) throws EmployeeCompanyException {
+		
+		Session session = (Session) BdUtil.getSessionFactory().openSession();
+		Transaction transaction = (Transaction) session.beginTransaction();
+		
+		try {
+			session.merge(c);
 			transaction.commit();
 		} catch (Exception e) {
 			transaction.rollback();
