@@ -20,6 +20,8 @@ public class Project {
 	@OneToMany(mappedBy = "project")
 	private List<CompanyProject> companyProject;
 	
+	@OneToMany(mappedBy = "project")
+	private List<EmployeeProject> employeeProject;
 	
 	public List<CompanyProject> getCompanyProject() {
 		return companyProject;
@@ -41,6 +43,12 @@ public class Project {
 	}
 	public String getButget() {
 		return butget;
+	}
+	public List<EmployeeProject> getEmployeeProject() {
+		return employeeProject;
+	}
+	public void setEmployeeProject(List<EmployeeProject> employeeProject) {
+		this.employeeProject = employeeProject;
 	}
 	public void setButget(String butget) {
 		this.butget = butget;

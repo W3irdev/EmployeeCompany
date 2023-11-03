@@ -3,12 +3,14 @@ package com.jacaranda.models;
 import java.sql.Date;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.List;
 import java.util.Objects;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 
 @Entity
@@ -25,7 +27,11 @@ public class Employee {
 	@ManyToOne
 	@JoinColumn(name = "idCompany")
 	private Company company;
+	private String role;
+	private String password;
 	
+	@OneToMany(mappedBy = "employee")
+	private List<EmployeeProject> employeProjects;
 	
 	
 
@@ -53,6 +59,48 @@ public class Employee {
 		this.gender = gender;
 		setDateOfBirth(dateOfBirth);
 		this.company = company;
+	}
+
+	
+	
+	public Employee(int id, String firstName, String lastName, String email, String gender, String dateOfBirth,
+			Company company, String role, String password) throws Exception {
+		super();
+		this.id = id;
+		this.firstName = firstName;
+		this.lastName = lastName;
+		this.email = email;
+		this.gender = gender;
+		setDateOfBirth(dateOfBirth);
+		this.company = company;
+		this.role = role;
+		this.password = password;
+	}
+	
+	
+
+	public List<EmployeeProject> getEmployeProjects() {
+		return employeProjects;
+	}
+
+	public void setEmployeProjects(List<EmployeeProject> employeProjects) {
+		this.employeProjects = employeProjects;
+	}
+
+	public String getRole() {
+		return role;
+	}
+
+	public void setRole(String role) {
+		this.role = role;
+	}
+
+	public String getPassword() {
+		return password;
+	}
+
+	public void setPassword(String password) {
+		this.password = password;
 	}
 
 	public int getId() {

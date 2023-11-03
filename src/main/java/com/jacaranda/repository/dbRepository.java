@@ -85,6 +85,31 @@ public class dbRepository {
 	}
 	
 	@SuppressWarnings("unchecked")
+	public static <T> T getUserEmployee(Class<T> c, String email) throws Exception {
+		Session session=null;
+		T result = null;
+		
+		try {
+			session = BdUtil.getSessionFactory().openSession();
+		} catch (Exception e) {
+			throw new Exception("Error en la base de datos");
+		}
+		try {
+			result = (T) session.createSelectionQuery("From "+c.getName()+ " where email = :email").setParameter("email", email).getSingleResultOrNull();
+			
+			
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+			throw new Exception("Error al obtener la entidad");
+
+		}
+		
+		return result;
+		
+	}
+	
+	@SuppressWarnings("unchecked")
 	public static <T> List<T> findAll(Class<T> c) throws CompanyDatabaseException {
 		
 		Session session=null;
@@ -119,6 +144,7 @@ public class dbRepository {
 		}
 		
 	}
+	
 	
 	public static <T> void delete(T c) throws EmployeeCompanyException {
 		

@@ -96,6 +96,16 @@ if(session.getAttribute("userSession") != null && (session.getAttribute("userSes
 					<td><%=e.getDateOfBirth()%></td>
 
 					<td><%=e.getCompany().getName()%></td>
+					<%if(session.getAttribute("userSession")!=null && session.getAttribute("empleado")!=null && session.getAttribute("userSession").equals("user")){
+						Employee user = (Employee)session.getAttribute("empleado");
+						
+						if(user.getEmail().equals(e.getEmail())){%>
+						<td><form action="../companyProyect/addHoursProyect.jsp">
+						<input type="text" name="hourId" value="<%=user.getId()%>" hidden/>
+						<input type="submit" name="hour" value="Add Hour"/></form></td>
+						<% }%>
+						
+						<%}%>
 					<%if(session.getAttribute("userSession").equals("admin")){ %>
 					<form action="editEmployee.jsp"><td>
 					<input type="text" name="id" value="<%=e.getId()%>" hidden/>
