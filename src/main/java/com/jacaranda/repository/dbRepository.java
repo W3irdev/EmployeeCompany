@@ -162,7 +162,7 @@ public class dbRepository {
 	}
 	
 	public static <T> void modify(T c) throws EmployeeCompanyException {
-		
+
 		Session session = (Session) BdUtil.getSessionFactory().openSession();
 		Transaction transaction = (Transaction) session.beginTransaction();
 		

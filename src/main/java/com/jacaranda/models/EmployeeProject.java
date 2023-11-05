@@ -42,9 +42,6 @@ public class EmployeeProject {
 		return totalTime;
 	}
 
-	public void setTotalTime(long totalTime) {
-		this.totalTime = (int)totalTime;
-	}
 
 
 	public Employee getEmployee() {

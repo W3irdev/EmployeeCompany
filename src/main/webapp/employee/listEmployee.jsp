@@ -12,7 +12,7 @@
 
 <!DOCTYPE html>
 
-<html>
+<html lang="es">
 
 <head>
 

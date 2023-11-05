@@ -6,7 +6,7 @@
 <%@ page language="java" contentType="text/html; charset=ISO-8859-1"
     pageEncoding="ISO-8859-1"%>
 <!DOCTYPE html>
-<html>
+<html lang="es">
 <head>
 <meta charset="ISO-8859-1">
 <title>Insert title here</title>
@@ -61,7 +61,7 @@ String message ="";
             <label for="user">Email:</label>
             <input type="text" name="user" id="user" placeholder="Usuario">
             <label for="password">Contraseña:</label>
-            <input type="password" name="password" id="password" placeholder="Contraseña">
+            <input type="password" name="password" id="password" placeholder="Contrase�a">
             <br>
             <button type="submit" name="login" value="login">Login</button>
         </form>

@@ -18,7 +18,7 @@
 <%@ page language="java" contentType="text/html; charset=ISO-8859-1"
     pageEncoding="ISO-8859-1"%>
 <!DOCTYPE html>
-<html>
+<html lang="es">
 <head>
 <meta charset="ISO-8859-1">
 <title>Add Empleado</title>
@@ -29,9 +29,8 @@
 <%
 // Comprobamos si estamos logeado y si somos el usuario del horario
 if(session.getAttribute("userSession")!=null && session.getAttribute("userSession").equals("user")){ 
-Employee user = (Employee) session.getAttribute("empleado");
+Employee user = (Employee) dbRepository.find(Employee.class, ((Employee)session.getAttribute("empleado")).getId());
 List<CompanyProject> companiesProyects = user.getCompany().getCompanyProject();
-List<EmployeeProject> employeesProjects = user.getEmployeProjects();
 Project project = null;
 long totalTime = session.getAttribute("totalTime")!=null?(long)session.getAttribute("totalTime"):0;
 %>
@@ -78,6 +77,10 @@ long totalTime = session.getAttribute("totalTime")!=null?(long)session.getAttrib
 				  session.setAttribute("totalTime", totalTime);
 			  }
 		  }
+		  if(!found){
+			  totalTime = 0;
+			  session.setAttribute("totalTime", totalTime);
+		  }
 		 
 	   }
 	   
@@ -99,13 +102,24 @@ long totalTime = session.getAttribute("totalTime")!=null?(long)session.getAttrib
 	   }else{
 		   totalTime = (long)ChronoUnit.SECONDS.between((LocalDateTime)session.getAttribute("start"), LocalDateTime.now()) + totalTime;
 		   employeeProject = new EmployeeProject(user, project, totalTime);
-		   try{
-			   dbRepository.modify(employeeProject);
-			   session.setAttribute("totalTime", totalTime);
-			   session.setAttribute("empleado", user);
-		   }catch(EmployeeCompanyException ece){
-			   message=ece.getMessage();
+		   if(!user.getEmployeProjects().contains(employeeProject)){
+			   try{
+				   dbRepository.save(employeeProject);
+				   session.setAttribute("totalTime", totalTime);
+				   session.setAttribute("empleado", user);
+			   }catch(EmployeeCompanyException ece){
+				   message=ece.getMessage();
+			   } 
+		   }else{
+			   try{
+				   dbRepository.modify(employeeProject);
+				   session.setAttribute("totalTime", totalTime);
+				   session.setAttribute("empleado", user);
+			   }catch(EmployeeCompanyException ece){
+				   message=ece.getMessage();
+			   }
 		   }
+
 	   }
 	   
 	   
