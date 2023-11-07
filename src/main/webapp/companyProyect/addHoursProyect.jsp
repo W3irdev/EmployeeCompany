@@ -55,11 +55,8 @@ long totalTime = session.getAttribute("totalTime")!=null?(long)session.getAttrib
     </div>
   </div> 
   
-	<%if(request.getParameter("start")!=null){ %>
-	<button class="btn-info" type="submit" name="stop" value="stop">Stop</button>
-   <%}else{ %>
-   <button class="btn-info" type="submit" name="start" value="start">Start</button>
-   <% }%>
+  
+
    
    <%
    // Cuando pulsemos el boton start, aseguramos que no tengamos valores nulos
@@ -69,7 +66,6 @@ long totalTime = session.getAttribute("totalTime")!=null?(long)session.getAttrib
 	   if(user.getEmployeProjects().isEmpty()){
 		   session.setAttribute("start", LocalDateTime.now());
 	   }else{
-		   session.setAttribute("start", LocalDateTime.now());
 		   EmployeeProject ep = null;
 		   boolean found = false;
 		  Iterator<EmployeeProject>  it = user.getEmployeProjects().iterator();
@@ -88,6 +84,7 @@ long totalTime = session.getAttribute("totalTime")!=null?(long)session.getAttrib
 		  }
 		 
 	   }
+		   session.setAttribute("start", LocalDateTime.now());
 	   // Cuando pulsemos Stop, comprobamos que no tengamos valores nulos
    }else if(request.getParameter("stop")!=null && request.getParameter("stop").equals("stop") && request.getParameter("company")!=null){
 	   
@@ -95,7 +92,7 @@ long totalTime = session.getAttribute("totalTime")!=null?(long)session.getAttrib
 	   // Buscamos en el usuario si ese EmployeeProject ya existe, si no, lo guardamos en la base de datos.
 	   project = dbRepository.find(Project.class, request.getParameter("company"));
 	   if(user.getEmployeProjects().isEmpty()){
-	   totalTime = ChronoUnit.SECONDS.between((LocalDateTime)session.getAttribute("start"), LocalDateTime.now());
+	   totalTime += ChronoUnit.SECONDS.between((LocalDateTime)session.getAttribute("start"), LocalDateTime.now());
 	   employeeProject = new EmployeeProject(user, project, totalTime);
 		   try{
 			   
@@ -129,9 +126,17 @@ long totalTime = session.getAttribute("totalTime")!=null?(long)session.getAttrib
 
 	   }
 	   
-	   
+	   session.removeAttribute("start");
    }%>
-  
+  	<%
+	// ToDoOOOOOO
+	LocalDateTime dateStart = (LocalDateTime)session.getAttribute("start");
+	if(dateStart==null || request.getParameter("stop")!=null){ %>
+	<button class="btn-info" type="submit" name="start" value="start">Start</button>
+   <%}else if(dateStart!=null || request.getParameter("start")!=null){ %>
+   <button class="btn-info" type="submit" name="stop" value="stop">Stop</button>
+   <% 
+   }%>
 </form>
 <%=message %>
 Tiempo total trabajado: <%=totalTime %>

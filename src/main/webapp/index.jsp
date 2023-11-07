@@ -78,7 +78,7 @@ String message ="";
 	<% 
 	// Si queremos cambiar de usuario, deslogeamos y limpiamos la session.
 	if(request.getParameter("logout")!=null && request.getParameter("logout").equals("logout")){
-		session.removeAttribute("userSession"); 
+		session.invalidate();
 		response.sendRedirect("#");
 		return;
 	}%>
