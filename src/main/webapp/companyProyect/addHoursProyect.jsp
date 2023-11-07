@@ -60,8 +60,12 @@ long totalTime = session.getAttribute("totalTime")!=null?(long)session.getAttrib
    <%}else{ %>
    <button class="btn-info" type="submit" name="start" value="start">Start</button>
    <% }%>
-   <%if(request.getParameter("start")!=null && request.getParameter("start").equals("start") && request.getParameter("company")!=null){
+   
+   <%
+   // Cuando pulsemos el boton start, aseguramos que no tengamos valores nulos
+   if(request.getParameter("start")!=null && request.getParameter("start").equals("start") && request.getParameter("company")!=null){
 	   project = dbRepository.find(Project.class, request.getParameter("company"));
+	   // Guardamos en session el tiempo actual, si ese EmployeeProject ya se ha iniciado alguna vez, cargamos la instancia y recuperamos su tiempo
 	   if(user.getEmployeProjects().isEmpty()){
 		   session.setAttribute("start", LocalDateTime.now());
 	   }else{
@@ -77,15 +81,18 @@ long totalTime = session.getAttribute("totalTime")!=null?(long)session.getAttrib
 				  session.setAttribute("totalTime", totalTime);
 			  }
 		  }
+		  // Si no, empezamos el contador de esa instancia a 0
 		  if(!found){
 			  totalTime = 0;
 			  session.setAttribute("totalTime", totalTime);
 		  }
 		 
 	   }
-	   
+	   // Cuando pulsemos Stop, comprobamos que no tengamos valores nulos
    }else if(request.getParameter("stop")!=null && request.getParameter("stop").equals("stop") && request.getParameter("company")!=null){
 	   
+	   // Creamos un proyecto rescatando de la base de datos la compañia que esta seleccionada
+	   // Buscamos en el usuario si ese EmployeeProject ya existe, si no, lo guardamos en la base de datos.
 	   project = dbRepository.find(Project.class, request.getParameter("company"));
 	   if(user.getEmployeProjects().isEmpty()){
 	   totalTime = ChronoUnit.SECONDS.between((LocalDateTime)session.getAttribute("start"), LocalDateTime.now());

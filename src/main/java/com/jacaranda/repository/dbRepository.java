@@ -4,12 +4,8 @@ import java.util.List;
 
 import org.hibernate.Session;
 import org.hibernate.Transaction;
-import org.hibernate.query.SelectionQuery;
-
 import com.jacaranda.exceptions.CompanyDatabaseException;
 import com.jacaranda.exceptions.EmployeeCompanyException;
-import com.jacaranda.models.Company;
-import com.jacaranda.models.Employee;
 import com.jacaranda.utility.BdUtil;
 
 public class dbRepository {
