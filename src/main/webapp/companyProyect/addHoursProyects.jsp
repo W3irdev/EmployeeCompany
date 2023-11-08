@@ -1,3 +1,6 @@
+<%@page import="java.util.HashMap"%>
+<%@page import="java.util.Map"%>
+<%@page import="java.util.Arrays"%>
 <%@page import="java.util.Iterator"%>
 <%@page import="com.jacaranda.models.EmployeeProject"%>
 <%@page import="java.time.temporal.ChronoUnit"%>
@@ -31,6 +34,7 @@
 if(session.getAttribute("userSession")!=null && session.getAttribute("userSession").equals("user")){ 
 Employee user = (Employee) dbRepository.find(Employee.class, ((Employee)session.getAttribute("empleado")).getId());
 List<CompanyProject> companiesProyects = user.getCompany().getCompanyProject();
+Map<Integer, LocalDateTime> inWork = new HashMap<Integer, LocalDateTime>();
 Project project = null;
 
 
@@ -38,39 +42,56 @@ Project project = null;
 <body>
 
 <%
-	String message = "";
-	EmployeeProject employeeProject = null;
-	if(request.getParameter("start")!=null && request.getParameter("company")!=null){
-		String paro = "";
-		
-	}
+String message = "";
 		
 	
 	
 %>
 <%@ include file="/navbar.jsp" %>
+
+<%
+	long totalTime = session.getAttribute("totalTime2")!=null?(long)session.getAttribute("totalTime2"):0;
+	if(request.getParameter("startButton")!=null){
+		
+		int idProject = Integer.valueOf(request.getParameter("startButton"));
+			
+			inWork.put(idProject, LocalDateTime.now());
+			session.setAttribute("inWork", inWork);
+	}else if(request.getParameter("finishButton")!=null){
+		if(inWork.containsKey(Integer.valueOf(request.getParameter("finishButton")))){
+			totalTime =  ChronoUnit.MINUTES.between(LocalDateTime.now(), inWork.get(Integer.valueOf(request.getParameter("finishButton")))) ;
+			session.setAttribute("totalTime2", totalTime);
+			session.setAttribute("inWork", inWork);
+			dbRepository.modify(new EmployeeProject(user, dbRepository.find(Project.class, Integer.valueOf(request.getParameter("finishButton"))), totalTime)) ;
+			
+		}
+	}
+
+%>
+
 <form>
   <div class="form-group row">
     <label for="company" class="col-4 col-form-label">Compañias</label> 
     <div class="col-8">
-          <select id="company" name="company" class="custom-select" required="required" multiple="multiple">
+    <ul>
       	<%for(CompanyProject c : companiesProyects){ %>
-     	<%if(request.getParameter("company")!=null && Integer.valueOf(request.getParameter("company"))==c.getProject().getId()){ %>
-			<option value="<%= c.getProject().getId()%>" selected="selected"><%= c.getProject().getName()%></option>
-			<%}else{%> <option value="<%= c.getProject().getId()%>"><%= c.getProject().getName()%></option><%}%>
+      	<li>
+     	<%if(request.getParameter("finishButton")!=null && inWork.containsKey(c.getProject().getId())){ %>
+			<button type="submit" name="finishButton" value="<%= c.getProject().getId()%>">Terminar</button><%= c.getProject().getName()%>
+			<%}else{%> <button type="submit" name="startButton" value="<%= c.getProject().getId()%>">Empezar</button><%= c.getProject().getName()%><%}%>
       	<%} %>
-      </select>
+      	</li>
+      </ul>
     </div>
   </div> 
 
-   	<%if(request.getParameter("start")!=null){ %>
-	<button class="btn-info" type="submit" name="stop" value="stop">Stop</button>
-   <%}else{ %>
-   <button class="btn-info" type="submit" name="start" value="start">Start</button>
-   <% }%>
+
 
   
 </form>
+
+
+
 <%=message %>
 
 

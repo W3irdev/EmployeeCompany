@@ -14,6 +14,10 @@
         <a class="nav-link" href="${pageContext.request.contextPath}/employee/addEmployee.jsp">Añadir Empleado</a>
         
       </li>
+            <li class="nav-item">
+        <a class="nav-link" href="${pageContext.request.contextPath}/companyProyect/addHoursProyects.jsp">Trabajos Horas</a>
+        
+      </li>
           <li class="nav-item">
         <a class="nav-link" href="${pageContext.request.contextPath}/companyProyect/addCompanyProject.jsp">Añadir Company Proyect</a>
         
