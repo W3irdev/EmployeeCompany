@@ -58,7 +58,12 @@ String message = "";
 			inWork.remove(Integer.valueOf(request.getParameter("finishButton")));
 			session.setAttribute("totalTime2", totalTime);
 			session.setAttribute("inWork", inWork);
-			dbRepository.modify(new EmployeeProject(user, dbRepository.find(Project.class, Integer.valueOf(request.getParameter("finishButton"))), totalTime)) ;
+			if(user.getEmployeProjects().contains(new EmployeeProject(user, dbRepository.find(Project.class, Integer.valueOf(request.getParameter("finishButton"))), totalTime))){
+				dbRepository.modify(new EmployeeProject(user, dbRepository.find(Project.class, Integer.valueOf(request.getParameter("finishButton"))), totalTime)) ;
+				
+			}else{
+				dbRepository.save(new EmployeeProject(user, dbRepository.find(Project.class, Integer.valueOf(request.getParameter("finishButton"))), totalTime));
+			}
 			
 		}
 	}
@@ -69,7 +74,7 @@ String message = "";
   <div class="form-group row">
     <label for="company" class="col-4 col-form-label">Compañias</label> 
     <div class="col-8">
-    <ul>
+    <ul style="list-style-type: none;">
       	<%for(CompanyProject c : companiesProyects){ %>
       	<li>
      	<%if(inWork.containsKey(c.getProject().getId())){ %>

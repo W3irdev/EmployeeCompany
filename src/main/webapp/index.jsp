@@ -20,7 +20,7 @@
 // Variable para mostrar mensajes en la pagina
 String message ="";
 
-
+	
 	if(request.getParameter("login")!=null && request.getParameter("login").equals("login")){
 		// hacemos una consulta a la base de datos para comprobar que el usuario exista
 		try{
@@ -57,22 +57,21 @@ String message ="";
 <%if(session.getAttribute("userSession")==null){ %>
     <div class="appLogin">
 
-        <form action="" method="POST">
+        <form class="form-control" method="POST">
             <label for="user">Email:</label>
             <input type="text" name="user" id="user" placeholder="Usuario">
             <label for="password">Contraseña:</label>
-            <input type="password" name="password" id="password" placeholder="Contraseña">
+            <input type="password" name="password" id="password" placeholder="Contraseï¿½a">
             <br>
-            <button type="submit" name="login" value="login">Login</button>
+            <button class="btn-info" name="login" value="login">Login</button>
         </form>
     </div>
-	<%=message %>
 </section></main>
 </div>
 <%}else{%>
 	<h1>USUARIO IDENTIFICADO</h1>
 	<form id="logout">
-	<button type="submit" name="logout" value="logout">Deslogear</button>
+	<button class="btn-info" name="logout" value="logout">Deslogear</button>
 	</form>
 	
 	<% 
@@ -84,5 +83,6 @@ String message ="";
 	}%>
 	
 <%}%>
+	<%=message %>
 </body>
 </html>
