@@ -36,7 +36,7 @@ String message ="";
 			return;
 		// En caso de que la contrasena no coincida lo mostramos por pantalla
 		}else{
-			message="La contraseña es icorrecta";
+			message="La contraseña es incorrecta";
 		}
 		
 		}catch(Exception e){
@@ -60,7 +60,7 @@ String message ="";
         <form action="" method="POST">
             <label for="user">Email:</label>
             <input type="text" name="user" id="user" placeholder="Usuario">
-            <label for="password">ContraseÃ±a:</label>
+            <label for="password">Contraseña:</label>
             <input type="password" name="password" id="password" placeholder="Contraseña">
             <br>
             <button type="submit" name="login" value="login">Login</button>

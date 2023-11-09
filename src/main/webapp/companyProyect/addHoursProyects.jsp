@@ -34,21 +34,16 @@
 if(session.getAttribute("userSession")!=null && session.getAttribute("userSession").equals("user")){ 
 Employee user = (Employee) dbRepository.find(Employee.class, ((Employee)session.getAttribute("empleado")).getId());
 List<CompanyProject> companiesProyects = user.getCompany().getCompanyProject();
-Map<Integer, LocalDateTime> inWork = new HashMap<Integer, LocalDateTime>();
+Map<Integer, LocalDateTime> inWork = session.getAttribute("inWork")!=null?(HashMap<Integer, LocalDateTime>)session.getAttribute("inWork"):new HashMap<Integer, LocalDateTime>();
 Project project = null;
-
 
 %>
 <body>
-
 <%
 String message = "";
 		
-	
-	
 %>
 <%@ include file="/navbar.jsp" %>
-
 <%
 	long totalTime = session.getAttribute("totalTime2")!=null?(long)session.getAttribute("totalTime2"):0;
 	if(request.getParameter("startButton")!=null){
@@ -60,6 +55,7 @@ String message = "";
 	}else if(request.getParameter("finishButton")!=null){
 		if(inWork.containsKey(Integer.valueOf(request.getParameter("finishButton")))){
 			totalTime =  ChronoUnit.MINUTES.between(LocalDateTime.now(), inWork.get(Integer.valueOf(request.getParameter("finishButton")))) ;
+			inWork.remove(Integer.valueOf(request.getParameter("finishButton")));
 			session.setAttribute("totalTime2", totalTime);
 			session.setAttribute("inWork", inWork);
 			dbRepository.modify(new EmployeeProject(user, dbRepository.find(Project.class, Integer.valueOf(request.getParameter("finishButton"))), totalTime)) ;
@@ -76,21 +72,15 @@ String message = "";
     <ul>
       	<%for(CompanyProject c : companiesProyects){ %>
       	<li>
-     	<%if(request.getParameter("finishButton")!=null && inWork.containsKey(c.getProject().getId())){ %>
+     	<%if(inWork.containsKey(c.getProject().getId())){ %>
 			<button type="submit" name="finishButton" value="<%= c.getProject().getId()%>">Terminar</button><%= c.getProject().getName()%>
 			<%}else{%> <button type="submit" name="startButton" value="<%= c.getProject().getId()%>">Empezar</button><%= c.getProject().getName()%><%}%>
       	<%} %>
       	</li>
       </ul>
     </div>
-  </div> 
-
-
-
-  
+  </div>  
 </form>
-
-
 
 <%=message %>
 
