@@ -33,6 +33,8 @@ if(session.getAttribute("userSession")!=null && session.getAttribute("userSessio
 	String gender = "";
 	Date dateOfBirth = null;
 	Company company = null;
+	String rol = "";
+	String password = "";
 	List<Company> companies = new ArrayList<Company>();
 	try{
 	// Inicializamos la lista de companias
@@ -56,6 +58,9 @@ if(session.getAttribute("userSession")!=null && session.getAttribute("userSessio
 			gender = emp.getGender();
 			dateOfBirth = emp.getDateOfBirth();
 			company = emp.getCompany();
+			rol = emp.getRole();
+			password = emp.getPassword();
+			
 			session.setAttribute("emp", emp);
 		}
 	}catch(Exception e){
@@ -78,7 +83,7 @@ if(session.getAttribute("userSession")!=null && session.getAttribute("userSessio
 			try{
 				// Si todos los campos estan rellenos creamos el empleado que sera modificado, pero en una instancia nueva
 				if(id!=-1 && !name.isBlank() && !surname.isBlank() && !email.isBlank() && !gender.isBlank() && company!=null){		
-					modEmp = new Employee(id, name, surname, email, gender, request.getParameter("birthdate"), company);
+					modEmp = new Employee(id, name, surname, email, gender, request.getParameter("birthdate"), company, rol, password);
 				// Si el id del usuario que venia originalmente al pulsar el boton de editar en la lista coincide con el que va a ser modificado, llamamos a la funcion modificar.
 				if(emp.getId()==modEmp.getId()){
 					dbRepository.modify(modEmp);
@@ -143,6 +148,21 @@ if(session.getAttribute("userSession")!=null && session.getAttribute("userSessio
       	<%} %>
         
       </select>
+    </div>
+  </div> 
+  <div class="form-group row">
+    <label for="rol" class="col-4 col-form-label">Compañia</label> 
+    <div class="col-8">
+          <select id="rol" name="rol" class="custom-select" required="required">
+    		<option value="user">Usuario</option>
+    		<option value="admin">Administrador</option>    
+	      </select>
+    </div>
+  </div> 
+  <div class="form-group row">
+    <label for="password" class="col-4 col-form-label">Compañia</label> 
+    <div class="col-8">
+			<input type="password"/>
     </div>
   </div> 
   <div class="form-group row">
