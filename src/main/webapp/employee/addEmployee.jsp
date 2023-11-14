@@ -37,20 +37,29 @@ if(session.getAttribute("userSession")!=null && session.getAttribute("userSessio
 
 	// Comprobamos que se ha pulsado el boton de anadir y que ningun campo quede vacio.
 	if(request.getParameter("submit")!= null && request.getParameter("submit").equals("submit") && request.getParameter("name")!=null && request.getParameter("surname")!=null && request.getParameter("email")!=null 
-			&& request.getParameter("gender")!=null && request.getParameter("birthdate")!=null && request.getParameter("company")!=null){
+			&& request.getParameter("gender")!=null && request.getParameter("birthdate")!=null && request.getParameter("company")!=null && request.getParameter("password")!=null && request.getParameter("passwordR")!=null){
 			String name = request.getParameter("name");
 			String surname = request.getParameter("surname");
 			String email = request.getParameter("email");
 			String gender = request.getParameter("gender");
 			String birthdate = request.getParameter("birthdate");
 			String company = request.getParameter("company");
+			String password = request.getParameter("password");
+			String passwordR = request.getParameter("passwordR");
 			// Recuperamos la compania de la lista.
 			Company c = dbRepository.find(Company.class, Integer.valueOf(company));
 			try{
 				// Creamos la instancia de empleado que sera guardada
 				Employee newEmp = new Employee(name,surname,email,gender,birthdate,c);
+				newEmp.setPassword(password);
+				if(password.equals(passwordR)){
+					
 				dbRepository.save(newEmp);
 				message = "Usuario añadido con exito";
+				}else{
+					message = "La contraseña no coincide";
+				}
+				
 			}catch (EmployeeCompanyException ece){
 				message=ece.getMessage();
 			}catch (Exception e){
@@ -101,6 +110,18 @@ if(session.getAttribute("userSession")!=null && session.getAttribute("userSessio
       </select>
     </div>
   </div> 
+  <div class="form-group row">
+    <label for="password" class="col-4 col-form-label">Contraseña</label> 
+    <div class="col-8">
+      <input id="password" name="password" placeholder="Contraseña" type="password" class="form-control" required="required">
+    </div>
+  </div>
+  <div class="form-group row">
+    <label for="passwordR" class="col-4 col-form-label">Repite contraseña</label> 
+    <div class="col-8">
+      <input id="passwordR" name="passwordR" placeholder="Repite Contraseña" type="password" class="form-control" required="required">
+    </div>
+  </div>
   <div class="form-group row">
     <div class="offset-4 col-8">
       <button name="submit" type="submit" class="btn btn-primary" value="submit">Enviar</button>

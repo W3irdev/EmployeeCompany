@@ -1,5 +1,6 @@
 package com.jacaranda.models;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
@@ -20,10 +21,10 @@ public class Company {
 	private String city;
 	
 	@OneToMany(mappedBy = "company")
-	private List<Employee> employeeList;
+	private List<Employee> employeeList = new ArrayList<Employee>();
 	
 	@OneToMany(mappedBy = "company")
-	private List<CompanyProject> companyProject;
+	private List<CompanyProject> companyProject = new ArrayList<CompanyProject>();
 	
 	
 	public List<CompanyProject> getCompanyProject() {

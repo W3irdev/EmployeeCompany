@@ -18,6 +18,7 @@ public class dbRepository {
 		
 		try {
 			session = BdUtil.getSessionFactory().openSession();
+		
 		} catch (Exception e) {
 			throw new Exception("Error en la base de datos");
 		}
@@ -100,7 +101,7 @@ public class dbRepository {
 			throw new Exception("Error al obtener la entidad");
 
 		}
-		
+		session.close();
 		return result;
 		
 	}
@@ -138,6 +139,7 @@ public class dbRepository {
 			transaction.rollback();
 			throw new EmployeeCompanyException("No se ha podido añadir a la tabla " + c.getClass());
 		}
+		session.close();
 		
 	}
 	
@@ -155,6 +157,7 @@ public class dbRepository {
 			throw new EmployeeCompanyException("No se ha podido eliminar de la tabla " + c.getClass());
 		}
 		
+		session.close();
 	}
 	
 	public static <T> void modify(T c) throws EmployeeCompanyException {
@@ -170,6 +173,7 @@ public class dbRepository {
 			throw new EmployeeCompanyException("No se ha podido añadir a la tabla " + c.getClass());
 		}
 		
+		session.close();
 	}
 	
 }

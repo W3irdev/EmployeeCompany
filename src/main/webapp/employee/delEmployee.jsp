@@ -34,6 +34,8 @@ if(session.getAttribute("userSession")!=null && session.getAttribute("userSessio
 	Date dateOfBirth = null;
 	Company company = null;
 	String companyName = "";
+	String rol = "";
+	String password = "";
 	ArrayList<Company> companies = null;
 	try{
 		// Inicializamos la lista de companias
@@ -61,7 +63,8 @@ if(session.getAttribute("userSession")!=null && session.getAttribute("userSessio
 		email = emp.getEmail();
 		gender = emp.getGender();
 		dateOfBirth = emp.getDateOfBirth();
-		
+		rol = emp.getRole();
+		password = emp.getPassword();
 		company = emp.getCompany();
 		companyName = emp.getCompany().getName();
 		session.setAttribute("emp", emp);
@@ -76,10 +79,10 @@ if(session.getAttribute("userSession")!=null && session.getAttribute("userSessio
 			try{
 				// Comprobamos que los campos esten rellenos y creamos la instancia del empleado que se va a eliminar
 				if(id!=-1 && !name.isBlank() && !surname.isBlank() && !email.isBlank() && !gender.isBlank() && company!=null){		
-					delEmp = new Employee(id, name, surname, email, gender, String.valueOf(dateOfBirth), company);
+					delEmp = new Employee(id, name, surname, email, gender, String.valueOf(dateOfBirth), company, rol, password);
 				// Si coincide lo eliminamos, si no avisamos que se ha modificado la id.
 				if(emp.getId()==delEmp.getId()){
-					
+					emp.setEmployeProjects(null);
 					dbRepository.delete(emp);
 					message="Borrado con exito";
 					session.removeAttribute("emp");
@@ -89,7 +92,7 @@ if(session.getAttribute("userSession")!=null && session.getAttribute("userSessio
 				}
 				}else message = "Todos los campos deben tener valor";
 			}catch(Exception e){
-				message="No se ha podido modificar";
+				message=e.getMessage();
 				session.removeAttribute("emp");
 			}
 		}

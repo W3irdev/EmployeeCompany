@@ -1,3 +1,4 @@
+<%@page import="org.apache.commons.codec.digest.DigestUtils"%>
 <%@page import="com.jacaranda.models.Employee"%>
 <%@page import="java.util.ArrayList"%>
 <%@page import="java.util.List"%>
@@ -28,7 +29,7 @@ String message ="";
 		Employee user = dbRepository.getUserEmployee(Employee.class, request.getParameter("user"));
 		
 		// Comparamos la password de la base de datos con la del campo password del formulario
-		if(user.getPassword().equals(request.getParameter("password"))){
+		if(DigestUtils.md5Hex(request.getParameter("password")).equals(user.getPassword()) ){
 			// Creamos una session con el rol del usuario y lo redireccionamos a la lista de empleados.
 			session.setAttribute("userSession", user.getRole());
 			session.setAttribute("empleado", user);

@@ -150,6 +150,7 @@ if(session.getAttribute("userSession")!=null && session.getAttribute("userSessio
       </select>
     </div>
   </div> 
+  
   <div class="form-group row">
     <label for="rol" class="col-4 col-form-label">Compañia</label> 
     <div class="col-8">
@@ -165,6 +166,12 @@ if(session.getAttribute("userSession")!=null && session.getAttribute("userSessio
 			<input type="password"/>
     </div>
   </div> 
+  <div class="form-group row">
+    <label for="password" class="col-4 col-form-label">Contraseña</label> 
+    <div class="col-8">
+      <input id="password" name="password" placeholder="******" type="password" class="form-control" required="required">
+    </div>
+  </div>
   <div class="form-group row">
     <div class="offset-4 col-8">
       <button name="modSubmit" type="submit" class="btn btn-primary" value="mod">Editar</button>
