@@ -76,7 +76,7 @@ public class dbRepository {
 			throw new Exception("Error al obtener la entidad");
 
 		}
-		
+		session.close();
 		return result;
 		
 	}
@@ -101,7 +101,7 @@ public class dbRepository {
 			throw new Exception("Error al obtener la entidad");
 
 		}
-		session.close();
+		
 		return result;
 		
 	}

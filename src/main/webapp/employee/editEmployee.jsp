@@ -1,3 +1,4 @@
+<%@page import="org.apache.commons.codec.digest.DigestUtils"%>
 <%@page import="java.util.List"%>
 <%@page import="java.sql.Date"%>
 <%@page import="com.jacaranda.exceptions.EmployeeCompanyException"%>
@@ -18,7 +19,7 @@
 
 <%
 // Comprobamos que estamos logeado
-if(session.getAttribute("userSession")!=null && session.getAttribute("userSession").equals("admin")){ %>
+if(session.getAttribute("userSession")!=null){ %>
 <body>
 
 <%
@@ -36,6 +37,8 @@ if(session.getAttribute("userSession")!=null && session.getAttribute("userSessio
 	String rol = "";
 	String password = "";
 	List<Company> companies = new ArrayList<Company>();
+	String readonly = "";
+	if(session.getAttribute("userSession").equals("user")) readonly = "readonly='readonly'";
 	try{
 	// Inicializamos la lista de companias
 	if(companies.isEmpty()){
@@ -82,8 +85,20 @@ if(session.getAttribute("userSession")!=null && session.getAttribute("userSessio
 			dateOfBirth = Date.valueOf(request.getParameter("birthdate"));
 			try{
 				// Si todos los campos estan rellenos creamos el empleado que sera modificado, pero en una instancia nueva
-				if(id!=-1 && !name.isBlank() && !surname.isBlank() && !email.isBlank() && !gender.isBlank() && company!=null){		
-					modEmp = new Employee(id, name, surname, email, gender, request.getParameter("birthdate"), company, rol, password);
+				if(id!=-1 && !name.isBlank() && !surname.isBlank() && !email.isBlank() && !gender.isBlank() && company!=null){	
+					if(session.getAttribute("userSession").equals("admin") && request.getParameter("rol")!=null) rol = request.getParameter("rol");
+					if(session.getAttribute("userSession").equals("admin")){
+						
+						modEmp = new Employee(id, name, surname, email, gender, request.getParameter("birthdate"), company, rol, password);
+					}else if(session.getAttribute("userSession").equals("user")){
+							if(request.getParameter("password")== null && request.getParameter("rPassword")==null){
+								modEmp = new Employee(id, name, surname, email, gender, request.getParameter("birthdate"), company, rol, password);
+							}else if(request.getParameter("password")!= null && request.getParameter("rPassword")!=null && request.getParameter("password").equals(request.getParameter("rPassword"))){
+								password = DigestUtils.md5Hex(request.getParameter("password"));
+								modEmp = new Employee(id, name, surname, email, gender, request.getParameter("birthdate"), company, rol, password);
+							}
+						
+					}
 				// Si el id del usuario que venia originalmente al pulsar el boton de editar en la lista coincide con el que va a ser modificado, llamamos a la funcion modificar.
 				if(emp.getId()==modEmp.getId()){
 					dbRepository.modify(modEmp);
@@ -104,6 +119,7 @@ if(session.getAttribute("userSession")!=null && session.getAttribute("userSessio
 %>
 <%@ include file="../navbar.jsp" %>
 <form>
+
 <input id="id" name="idEmp" type="number" class="form-control" value="<%=id %>" required="required" readonly="readonly" hidden="true">
   <div class="form-group row">
     <label for="name" class="col-4 col-form-label">Nombre</label> 
@@ -120,13 +136,13 @@ if(session.getAttribute("userSession")!=null && session.getAttribute("userSessio
   <div class="form-group row">
     <label for="email" class="col-4 col-form-label">Email</label> 
     <div class="col-8">
-      <input id="email" name="email" placeholder="Email" type="email" class="form-control" value="<%=email %>" required="required">
+      <input id="email" name="email" placeholder="Email" type="email" class="form-control" value="<%=email %>" <%=readonly %> required="required">
     </div>
   </div>
   <div class="form-group row">
     <label for="gender" class="col-4 col-form-label">Genero</label> 
     <div class="col-8">
-      <input id="gender" name="gender" placeholder="Genero" type="text" class="form-control" value="<%=gender %>" required="required">
+      <input id="gender" name="gender" placeholder="Genero" type="text" class="form-control" value="<%=gender %>" <%=readonly %> required="required">
     </div>
   </div>
   <div class="form-group row">
@@ -138,7 +154,7 @@ if(session.getAttribute("userSession")!=null && session.getAttribute("userSessio
   <div class="form-group row">
     <label for="company" class="col-4 col-form-label">Compañia</label> 
     <div class="col-8">
-          <select id="company" name="company" class="custom-select" required="required">
+          <select id="company" name="company" class="custom-select" <%=readonly %> required="required">
       	<%for(Company c : companies){ %>
       		<%if(emp.getCompany().getId()==c.getId()){%>
       			<option value="<%= c.getName()%>" selected="selected"><%= c.getName()%></option>
@@ -151,8 +167,9 @@ if(session.getAttribute("userSession")!=null && session.getAttribute("userSessio
     </div>
   </div> 
   
+  <%if(session.getAttribute("userSession").equals("admin")){ %>
   <div class="form-group row">
-    <label for="rol" class="col-4 col-form-label">Compañia</label> 
+    <label for="rol" class="col-4 col-form-label">Rol</label> 
     <div class="col-8">
           <select id="rol" name="rol" class="custom-select" required="required">
     		<option value="user">Usuario</option>
@@ -160,18 +177,22 @@ if(session.getAttribute("userSession")!=null && session.getAttribute("userSessio
 	      </select>
     </div>
   </div> 
+  <%} %>
+
   <div class="form-group row">
-    <label for="password" class="col-4 col-form-label">Compañia</label> 
+    <label for="password" class="col-4 col-form-label">Contraseña nueva</label> 
     <div class="col-8">
-			<input type="password"/>
+		<input id="password" name="password" placeholder="******" type="password" class="form-control">
     </div>
   </div> 
+   <%if(session.getAttribute("userSession").equals("user")) {%>
   <div class="form-group row">
-    <label for="password" class="col-4 col-form-label">Contraseña</label> 
+    <label for="password" class="col-4 col-form-label">Repita Contraseña</label> 
     <div class="col-8">
-      <input id="password" name="password" placeholder="******" type="password" class="form-control" required="required">
+      <input id="password" name="rPassword" placeholder="******" type="password" class="form-control">
     </div>
   </div>
+  <%} %>
   <div class="form-group row">
     <div class="offset-4 col-8">
       <button name="modSubmit" type="submit" class="btn btn-primary" value="mod">Editar</button>

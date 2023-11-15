@@ -14,10 +14,6 @@
 <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css"> 
 <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
 </head>
-<%
-//Comprobamos la session, si somos usuario o admin muestra la pagina, en caso de que no seamos ninguno nos pedira que logeemos
-if(session.getAttribute("userSession")!=null && session.getAttribute("userSession").equals("admin")){ %>
-
 <body>
 <%
 	// Variables
@@ -52,10 +48,13 @@ if(session.getAttribute("userSession")!=null && session.getAttribute("userSessio
 				// Creamos la instancia de empleado que sera guardada
 				Employee newEmp = new Employee(name,surname,email,gender,birthdate,c);
 				newEmp.setPassword(password);
+				newEmp.setRole("user");
 				if(password.equals(passwordR)){
 					
 				dbRepository.save(newEmp);
 				message = "Usuario añadido con exito";
+				//response.sendRedirect();
+				//return;
 				}else{
 					message = "La contraseña no coincide";
 				}
@@ -131,5 +130,4 @@ if(session.getAttribute("userSession")!=null && session.getAttribute("userSessio
 <%=message %>
 
 </body>
-<%}else response.sendRedirect("../error500.jsp?msg=Debe ser administrador");  %>
 </html>

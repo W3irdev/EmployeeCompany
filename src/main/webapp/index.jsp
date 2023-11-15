@@ -44,6 +44,9 @@ String message ="";
 			message="Ese usuario no existe";
 		}
 		
+	}else if(request.getParameter("register")!=null){
+		response.sendRedirect("./employee/addEmployee.jsp");
+		return;
 	}
 
 
@@ -65,6 +68,7 @@ String message ="";
             <input type="password" name="password" id="password" placeholder="Contrase�a">
             <br>
             <button class="btn-info" name="login" value="login">Login</button>
+            <button class="btn-info" name="register" value="register">Registrarse</button>
         </form>
     </div>
 </section></main>
