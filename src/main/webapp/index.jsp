@@ -68,11 +68,8 @@ String message ="";
             <input type="password" name="password" id="password" placeholder="Contrase�a">
             <br>
             <button class="btn-info" name="login" value="login">Login</button>
-<<<<<<< HEAD
-            <button class="btn-info" name="register" value="register">Registrar</button>
-=======
             <button class="btn-info" name="register" value="register">Registrarse</button>
->>>>>>> branch 'main' of git@github.com:W3irdev/EmployeeCompany.git
+
         </form>
     </div>
 </section></main>
