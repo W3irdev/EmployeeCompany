@@ -14,8 +14,6 @@
 <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css"> 
 <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
 </head>
-
-
 <body>
 <%
 	// Variables
@@ -50,10 +48,13 @@
 				// Creamos la instancia de empleado que sera guardada
 				Employee newEmp = new Employee(name,surname,email,gender,birthdate,c);
 				newEmp.setPassword(password);
+				newEmp.setRole("user");
 				if(password.equals(passwordR)){
 					
 				dbRepository.save(newEmp);
 				message = "Usuario añadido con exito";
+				//response.sendRedirect();
+				//return;
 				}else{
 					message = "La contraseña no coincide";
 				}
@@ -129,5 +130,4 @@
 <%=message %>
 
 </body>
-
 </html>

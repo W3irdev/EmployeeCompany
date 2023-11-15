@@ -8,6 +8,9 @@ import java.util.Objects;
 
 import org.apache.commons.codec.digest.DigestUtils;
 
+import com.jacaranda.exceptions.EmployeeProjectException;
+import com.jacaranda.repository.EmployeeRepository;
+
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
@@ -81,8 +84,8 @@ public class Employee {
 	
 	
 
-	public List<EmployeeProject> getEmployeProjects() {
-		return employeProjects;
+	public List<EmployeeProject> getEmployeProjects() throws EmployeeProjectException {
+		return EmployeeRepository.getEmployeeProject(this.id);
 	}
 
 	public void setEmployeProjects(List<EmployeeProject> employeProjects) {
