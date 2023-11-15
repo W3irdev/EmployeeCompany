@@ -14,9 +14,7 @@
 <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css"> 
 <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
 </head>
-<%
-//Comprobamos la session, si somos usuario o admin muestra la pagina, en caso de que no seamos ninguno nos pedira que logeemos
-if(session.getAttribute("userSession")!=null && session.getAttribute("userSession").equals("admin")){ %>
+
 
 <body>
 <%
@@ -131,5 +129,5 @@ if(session.getAttribute("userSession")!=null && session.getAttribute("userSessio
 <%=message %>
 
 </body>
-<%}else response.sendRedirect("../error500.jsp?msg=Debe ser administrador");  %>
+
 </html>

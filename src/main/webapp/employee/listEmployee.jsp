@@ -103,6 +103,9 @@ if(session.getAttribute("userSession") != null && (session.getAttribute("userSes
 						<td><form action="../companyProyect/addHoursProyect.jsp">
 						<input type="text" name="hourId" value="<%=user.getId()%>" hidden/>
 						<input type="submit" name="hour" value="Add Hour"/></form></td>
+						<form action="editEmployee.jsp"><td>
+						<input type="text" name="id" value="<%=e.getId()%>" hidden/>
+						<input type="submit" name="emp" value="Editar"/></td></form>
 						<% }%>
 						
 						<%}%>
