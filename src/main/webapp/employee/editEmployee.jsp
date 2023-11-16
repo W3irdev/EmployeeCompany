@@ -16,16 +16,12 @@
 <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css"> 
 <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
 </head>
-
-<%
-// Comprobamos que estamos logeado
-if(session.getAttribute("userSession")!=null){ %>
 <body>
-
+<%@ include file="../navbar.jsp" %>
 <%
-	// Definimos las variables
+//Definimos las variables
 	// Comprobamos si hay algun empleado guardado en session, esto lo hago para comprobar que no se manipula mas tarde el id pasado por parametro
-	Employee emp = session.getAttribute("emp")!=null?(Employee)session.getAttribute("emp"):null;
+	
 	int id = -1;
 	String message = "";
 	String name= "";
@@ -38,6 +34,61 @@ if(session.getAttribute("userSession")!=null){ %>
 	String password = "";
 	List<Company> companies = new ArrayList<Company>();
 	String readonly = "";
+boolean validate = false;
+Employee emp = session.getAttribute("emp")!=null?(Employee)session.getAttribute("emp"):null;
+
+try{
+	// Al pasar de la pagina de usuarios a editar el usuario nos traemos su id y comprobamos y lo traemos de la base de datos.
+	emp = dbRepository.find(Employee.class, Integer.valueOf(request.getParameter("id")));
+	// Si existe inicializamos las variables.
+	if(emp!=null){
+		id = emp.getId();
+		name = emp.getFirstName();
+		surname = emp.getLastName();
+		email = emp.getEmail();
+		gender = emp.getGender();
+		dateOfBirth = emp.getDateOfBirth();
+		company = emp.getCompany();
+		rol = emp.getRole();
+		password = emp.getPassword();
+		
+		session.setAttribute("emp", emp);
+	}
+}catch(Exception e){
+	message = "No se encuentra ese empleado";
+}
+
+
+if(request.getParameter("inputPassword")!=null){
+	validate = DigestUtils.md5Hex(request.getParameter("inputPassword")).equals(emp.getPassword());
+}
+
+if(session.getAttribute("userSession")!=null && session.getAttribute("userSession").equals("user") && !validate){%>
+	<div class="container mt-5">
+  <div class="row justify-content-center">
+    <div class="col-md-6">
+      <div class="card">
+        <div class="card-body">
+          <h5 class="card-title text-center">Verificacion</h5>
+          <form>
+          <input id="id" name="id" type="number" class="form-control" value="<%=id %>" required="required" readonly="readonly" hidden="true">
+            <div class="form-group">
+              <label for="inputPassword">Contraseña</label>
+              <input type="password" class="form-control" name="inputPassword" id="inputPassword" placeholder="Verifica tu contraseña" required>
+            </div>
+            <button type="submit" class="btn btn-primary btn-block">Aceptar</button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<% }
+// Comprobamos que estamos logeado
+else if(session.getAttribute("userSession")!=null && (session.getAttribute("userSession").equals("admin") || validate)){ %>
+
+<%
+	
 	if(session.getAttribute("userSession").equals("user")) readonly = "readonly='readonly'";
 	try{
 	// Inicializamos la lista de companias
@@ -49,26 +100,6 @@ if(session.getAttribute("userSession")!=null){ %>
 	}
 
 
-	try{
-		// Al pasar de la pagina de usuarios a editar el usuario nos traemos su id y comprobamos y lo traemos de la base de datos.
-		emp = dbRepository.find(Employee.class, Integer.valueOf(request.getParameter("id")));
-		// Si existe inicializamos las variables.
-		if(emp!=null){
-			id = emp.getId();
-			name = emp.getFirstName();
-			surname = emp.getLastName();
-			email = emp.getEmail();
-			gender = emp.getGender();
-			dateOfBirth = emp.getDateOfBirth();
-			company = emp.getCompany();
-			rol = emp.getRole();
-			password = emp.getPassword();
-			
-			session.setAttribute("emp", emp);
-		}
-	}catch(Exception e){
-		message = "No se encuentra ese empleado";
-	}
 	
 	// Variable para comprobar diferencias
 	Employee modEmp = null;
@@ -117,7 +148,7 @@ if(session.getAttribute("userSession")!=null){ %>
 
 
 %>
-<%@ include file="../navbar.jsp" %>
+
 <form>
 
 <input id="id" name="idEmp" type="number" class="form-control" value="<%=id %>" required="required" readonly="readonly" hidden="true">
@@ -200,9 +231,11 @@ if(session.getAttribute("userSession")!=null){ %>
   </div>
 </form>
 <%=message %>
-
+<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
 </body>
 
-<%}else response.sendRedirect("../error500.jsp?msg=Debe ser administrador");  %>
+<%}else response.sendRedirect("../error500.jsp?msg=Debe estar logeado");  %>
 
 </html>
