@@ -67,7 +67,7 @@ public class dbRepository {
 			throw new Exception("Error en la base de datos");
 		}
 		try {
-			result = (T) session.createSelectionQuery("From "+c.getName()+ " where name = :name").setParameter("name", name).getSingleResultOrNull();
+			result = (T) session.createSelectionQuery("From "+c.getName()+ " where name = :name").setParameter("name", name).getResultList().get(0);
 			
 			
 			

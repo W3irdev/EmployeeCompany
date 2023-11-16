@@ -33,8 +33,9 @@
 	String rol = "";
 	String password = "";
 	List<Company> companies = new ArrayList<Company>();
-	String readonly = "";
-boolean validate = false;
+	String disabled= "";
+	String readonly ="";
+boolean validate = session.getAttribute("validate")!=null?true:false;
 Employee emp = session.getAttribute("emp")!=null?(Employee)session.getAttribute("emp"):null;
 
 try{
@@ -61,6 +62,7 @@ try{
 
 if(request.getParameter("inputPassword")!=null){
 	validate = DigestUtils.md5Hex(request.getParameter("inputPassword")).equals(emp.getPassword());
+	session.setAttribute("validate", validate);
 }
 
 if(session.getAttribute("userSession")!=null && session.getAttribute("userSession").equals("user") && !validate){%>
@@ -89,7 +91,10 @@ else if(session.getAttribute("userSession")!=null && (session.getAttribute("user
 
 <%
 	
-	if(session.getAttribute("userSession").equals("user")) readonly = "readonly='readonly'";
+	if(session.getAttribute("userSession").equals("user")) {
+		disabled = "disabled='disabled'";
+		readonly = "readonly='readonly'";
+	}
 	try{
 	// Inicializamos la lista de companias
 	if(companies.isEmpty()){
@@ -134,23 +139,26 @@ else if(session.getAttribute("userSession")!=null && (session.getAttribute("user
 				if(emp.getId()==modEmp.getId()){
 					dbRepository.modify(modEmp);
 					message="Modificado con exito";
+					session.removeAttribute("validate");
 				}else{
 					message="La id original no coincide";
 				}
 				}else message = "Todos los campos deben tener valor";
 			}catch(Exception e){
 				message="No se ha podido modificar";
+				session.removeAttribute("validate");
 			}
 		}
 	}catch(Exception e){
 		message = "Algo ha ido mal";
+		session.removeAttribute("validate");
 	}
 
 
 %>
 
 <form>
-
+<input id="id" name="id" type="number" class="form-control" value="<%=id %>" required="required" readonly="readonly" hidden="true">
 <input id="id" name="idEmp" type="number" class="form-control" value="<%=id %>" required="required" readonly="readonly" hidden="true">
   <div class="form-group row">
     <label for="name" class="col-4 col-form-label">Nombre</label> 
@@ -182,19 +190,28 @@ else if(session.getAttribute("userSession")!=null && (session.getAttribute("user
       <input id="birthdate" name="birthdate" type="date" class="form-control" value="<%=dateOfBirth %>" required="required">
     </div>
   </div>
+  <%if(session.getAttribute("userSession").equals("admin")){ %>
   <div class="form-group row">
     <label for="company" class="col-4 col-form-label">Compañia</label> 
     <div class="col-8">
-          <select id="company" name="company" class="custom-select" <%=readonly %> required="required">
+          <select id="company" name="company" class="custom-select" required="required">
       	<%for(Company c : companies){ %>
       		<%if(emp.getCompany().getId()==c.getId()){%>
       			<option value="<%= c.getName()%>" selected="selected"><%= c.getName()%></option>
       		<%}else{%>
 			<option value="<%= c.getName()%>"><%= c.getName()%></option>
       		<%}%>
-      	<%} %>
-        
+      	<%}%>
       </select>
+      	
+  	<%}else{ %>
+          <div class="form-group row">
+    <label for="company" class="col-4 col-form-label">Compañia</label> 
+    <div class="col-8">
+		<input id="company" name="company" type="text"  readonly="readonly" class="form-control" value=<%=emp.getCompany().getName() %>>
+    </div>
+  </div> 
+  <%} %>
     </div>
   </div> 
   
